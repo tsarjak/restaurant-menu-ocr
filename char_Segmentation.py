@@ -63,5 +63,13 @@ for idx, val in enumerate(hist):
         hist[idx] = 50
         length=0
 
+for idx, val in enumerate(hist):
+    if val!=50 and hist[idx-1] == 50:
+        x1 = idx
+    elif val==50 and hist[idx-1]!=50:
+        x2 = idx
+        roi = bw[0:y,x1:x2]
+        im = Image.fromarray(roi)
+        im.save("segmentedChar/" + str(idx) + ".jpg")
 print(hist)
 #Image.fromarray(bw).show()
