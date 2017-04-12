@@ -3,9 +3,10 @@ import numpy as np
 from cv2 import boundingRect, countNonZero, cvtColor, drawContours, findContours, getStructuringElement, imread, morphologyEx, pyrDown, rectangle, threshold
 from PIL import Image
 
-large = imread("card.jpg")
+large = imread("card2.jpg")
 # downsample and use it for processing
-rgb = pyrDown(large)
+rgb = large
+
 # apply grayscale
 small = cvtColor(rgb, cv2.COLOR_BGR2GRAY)
 
@@ -18,6 +19,7 @@ grad = morphologyEx(small, cv2.MORPH_GRADIENT, morph_kernel)
 _, bw = threshold(src=grad, thresh=0, maxval=255, type=cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 morph_kernel = getStructuringElement(cv2.MORPH_RECT, (9, 1))
 
+#bw = 255 - bw
 #Image.fromarray(bw).show()
 
 # connect horizontally oriented regions
@@ -29,16 +31,24 @@ mask = np.zeros(bw.shape, np.uint8)
 # find contours
 im2, contours, hierarchy = findContours(connected, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
-
 # filter contours
+count = 0
 for idx in range(0, len(hierarchy[0])):
     rect = x, y, rect_width, rect_height = boundingRect(contours[idx])
     # fill the contour
     mask = drawContours(mask, contours, idx, (255, 255, 2555), cv2.FILLED)
+
     # ratio of non-zero pixels in the filled region
     r = float(countNonZero(mask)) / (rect_width * rect_height)
     if r > 0.45 and rect_height > 8 and rect_width > 8:
+        #print(x,y,rect_height,rect_width)
+        count+=1
+        roi = rgb[y:y+rect_height,x:x+rect_width]
+        im = Image.fromarray(roi)
+        im.save("segmentedText/" + str(idx) + ".jpg") #TO crop the image
         rgb = rectangle(rgb, (x, y+rect_height), (x+rect_width, y), (0,255,0),3)
+        #Image.fromarray(roi).show()
 
 
-Image.fromarray(rgb).show()
+#print(count)
+Image.fromarray(rgb).show() 
