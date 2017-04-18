@@ -81,7 +81,6 @@ for idx, val in enumerate(hist):
 
         paddedImg = cv2.copyMakeBorder(roi,0,0,left,right,cv2.BORDER_CONSTANT,255); #padding
         paddedImg = cv2.resize(paddedImg,(28,28))                                   #resize to 28x28
-
+        paddedImg = 255 - paddedImg
         im = Image.fromarray(paddedImg)
         im.save("ResizedsegmentedChar/" + str(idx) + ".jpg")
-
