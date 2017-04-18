@@ -14,7 +14,6 @@ small = cvtColor(rgb, cv2.COLOR_BGR2GRAY)
 # binarize
 _, bw = threshold(src=small, thresh=0, maxval=255, type=cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
-
 #Inverting the image
 bw = 255 - bw
 
@@ -23,10 +22,10 @@ im = Image.fromarray(bw)
 
 
 #Loading the imag
-photo=im.load()
+photo = im.load()
 
 x= im.size[0]
-y=im.size[1]
+y= im.size[1]
 
 print(x,y)
 
@@ -69,7 +68,20 @@ for idx, val in enumerate(hist):
     elif val==50 and hist[idx-1]!=50:
         x2 = idx
         roi = bw[0:y,x1:x2]
-        im = Image.fromarray(roi)
-        im.save("segmentedChar/" + str(idx) + ".jpg")
-print(hist)
-#Image.fromarray(bw).show()
+
+#add padding to image tp resize it to 16x16
+        diff = x2-x1
+        paddingPixels = 16-diff;
+
+        if (diff)%2 == 0:
+            left = right = paddingPixels/2
+        else :
+            left = paddingPixels//2
+            right = paddingPixels - left
+
+        paddedImg = cv2.copyMakeBorder(roi,0,0,left,right,cv2.BORDER_CONSTANT,255); #padding
+        paddedImg = cv2.resize(paddedImg,(28,28))                                   #resize to 28x28
+
+        im = Image.fromarray(paddedImg)
+        im.save("ResizedsegmentedChar/" + str(idx) + ".jpg")
+
