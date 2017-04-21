@@ -1,6 +1,5 @@
 //it's going to be Legen...
 #include<iostream>
-#include<conio.h>
 #include<fstream>
 #include<cstring>
 #include<ctype.h>
@@ -340,7 +339,6 @@ int main(){
 		cout<<"\n\n";	
 	}
 	
-	getch();
 	return 0;
 }
 //...Dary...
