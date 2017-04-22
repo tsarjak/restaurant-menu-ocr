@@ -3,7 +3,9 @@ import glob
 import numpy as np
 from scipy import misc
 from PIL import Image
+
 root_directory = '/Users/vihanggodbole/Developer/restaurant-menu-ocr/training_data/'
+
 
 class Data(object):
 
@@ -16,18 +18,21 @@ class Data(object):
         self.test_labels = None
 
     def load_data(self):
-        
+
         # get paths of images
         paths = glob.glob(root_directory + '**/*.png')
         # get images
         images = []
         for path in paths:
-            grayscale_image = misc.imread(path, mode='L')   # get image in grayscale. shape(28,28)
-            images.append(grayscale_image.reshape(784, 1))  # shape is (784, 1). NOT (784, )
+            # get image in grayscale. shape(28,28)
+            grayscale_image = misc.imread(path, mode='L')
+            # shape is (784, 1). NOT (784, )
+            images.append(grayscale_image.reshape(784, 1))
 
         # get classification labels
         mat = scipy.io.loadmat('lists_var_size.mat')
-        training_labels = mat['list'][0, 0]['ALLlabels']    # shape = (62992, 1)
+        training_labels = mat['list'][0, 0][
+            'ALLlabels']    # shape = (62992, 1)
 
         # shuffle training data
         r_state = np.random.get_state()
@@ -42,7 +47,8 @@ class Data(object):
 
         temp = []
         for i in range(62292):
-            j = training_labels[i][0] - 1   # since training_lables[i] returns an ndarray. of 1x1
+            # since training_lables[i] returns an ndarray. of 1x1
+            j = training_labels[i][0] - 1
             # eg: if the sample is 'z' then training_labels[i] = 62. Thus,
             # temp[0] = [0,0...0,1]
             t = np.zeros((62, 1), dtype=np.int)
