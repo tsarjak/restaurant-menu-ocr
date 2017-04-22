@@ -1,10 +1,19 @@
 import scipy.io
+import re
 import glob
 import numpy as np
 from scipy import misc
 from PIL import Image
 
 root_directory = '/Users/vihanggodbole/Developer/restaurant-menu-ocr/training_data/'
+
+numbers = re.compile(r'(\d+)')
+
+
+def numericalSort(value):
+    parts = numbers.split(value)
+    parts[1::2] = map(int, parts[1::2])
+    return parts
 
 
 class Data(object):
@@ -20,7 +29,10 @@ class Data(object):
     def load_data(self):
 
         # get paths of images
-        paths = glob.glob(root_directory + '**/*.png')
+        paths = sorted(glob.glob(root_directory + '**/*.png'),
+                       key=numericalSort)
+        r_state = np.random.get_state()
+        np.random.shuffle(paths)    # shuffle paths
         # get images
         images = []
         for path in paths:
@@ -33,10 +45,8 @@ class Data(object):
         mat = scipy.io.loadmat('lists_var_size.mat')
         training_labels = mat['list'][0, 0][
             'ALLlabels']    # shape = (62992, 1)
-
         # shuffle training data
-        r_state = np.random.get_state()
-        np.random.shuffle(images)
+
         np.random.set_state(r_state)
         # shuffle the vector in the same way as images
         np.random.shuffle(training_labels)
