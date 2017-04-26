@@ -3,7 +3,6 @@ import re
 import glob
 import numpy as np
 from scipy import misc
-from PIL import Image
 
 root_directory = '/Users/vihanggodbole/Developer/restaurant-menu-ocr/training_data/'
 
@@ -19,12 +18,10 @@ def numericalSort(value):
 class Data(object):
 
     def __init__(self):
-        self.training_input = None
-        self.training_labels = None
-        self.validation_input = None
-        self.validation_labels = None
-        self.test_inputs = None
-        self.test_labels = None
+        self.training_input = np.zeros((50000, 784))
+        self.training_labels = np.zeros((50000, 62))
+        self.test_input = np.zeros((12992, 784))
+        self.test_labels = np.zeros((12992, 62))
 
     def load_data(self):
 
@@ -33,43 +30,34 @@ class Data(object):
                        key=numericalSort)
         r_state = np.random.get_state()
         np.random.shuffle(paths)    # shuffle paths
+
         # get images
-        images = []
-        for path in paths:
-            # get image in grayscale. shape(28,28)
-            grayscale_image = misc.imread(path, mode='L')
-            # shape is (784, 1). NOT (784, )
-            images.append(grayscale_image.reshape(784, 1))
+        for index, path in enumerate(paths):
+            # get image in grayscale. shape(28,28) and reshape it
+            grayscale_image = misc.imread(path, mode='L').reshape(1, 784)
+            if index < 50000:
+                self.training_input[index] = grayscale_image
+            else:
+                self.test_input[index - 50000] = grayscale_image
 
         # get classification labels
         mat = scipy.io.loadmat('lists_var_size.mat')
         training_labels = mat['list'][0, 0][
             'ALLlabels']    # shape = (62992, 1)
-        # shuffle training data
 
+        # shuffle training data
         np.random.set_state(r_state)
         # shuffle the vector in the same way as images
         np.random.shuffle(training_labels)
 
-        # first 50000 images as trainig data
-        self.training_input = images[:50000]
-        self.validation_input = images[50000:]
-
-        temp = []
-        for i in range(62292):
+        for i in range(len(paths)):
             # since training_lables[i] returns an ndarray. of 1x1
             j = training_labels[i][0] - 1
             # eg: if the sample is 'z' then training_labels[i] = 62. Thus,
             # temp[0] = [0,0...0,1]
-            t = np.zeros((62, 1), dtype=np.int)
-            t[j] = 1
-            temp.append(t)
-
-        self.training_labels = temp[:50000]
-        self.validation_labels = temp[50000:]
-
-    def wrap_train_data(self):
-        return [(x, y) for x, y in zip(self.training_input, self.training_labels)]
-
-    def wrap_validation_data(self):
-        return [(x, y) for x, y in zip(self.validation_input, self.validation_labels)]
+            t = np.zeros((1, 62), dtype=np.int)
+            t[0][j] = 1
+            if i < 50000:
+                self.training_labels[i] = t
+            else:
+                self.test_labels[i - 50000] = t

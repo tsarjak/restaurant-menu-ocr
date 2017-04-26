@@ -1,17 +1,27 @@
 from data_helper import Data
-import neural_network
-import network2
+from keras.models import Sequential
+from keras.layers import Dense, Activation
+from keras.optimizers import SGD
 
 data = Data()
 data.load_data()
-train = data.wrap_train_data()
-validation = data.wrap_validation_data()
 
-# net2 = network2.Network([784, 20, 62], cost=network2.CrossEntropyCost)
-'''net2.SGD(train, 400, 10, 0.03, lmbda=3.0, evaluation_data=validation,
-         monitor_evaluation_accuracy=True,
-         monitor_evaluation_cost=False,
-         monitor_training_accuracy=True,
-         monitor_training_cost=False)'''
-net = neural_network.NeuralNetwork([784, 20, 62])
-net.stoch_grad_desc(train, 300, 10, 3, test_data=validation)
+training_data = data.training_input
+training_labels = data.training_labels
+test_data = data.test_input
+test_labels = data.test_labels
+
+model = Sequential()
+
+sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+
+model.add(Dense(30, activation='sigmoid', input_shape=(784,)))
+model.add(Dense(62, activation='sigmoid'))
+model.compile(loss='mean_squared_error', optimizer=sgd)
+
+print('Starting to train...')
+
+history = model.fit(training_data, training_labels, epochs=20, batch_size=10)
+score = model.evaluate(test_data, test_labels, batch_size=32)
+
+print('Test accuracy: ', score)

@@ -51,13 +51,15 @@ class NeuralNetwork(object):
         for x, y in batch:
             delta_nabla_b, delta_nabla_w = self.backprop(
                 x, y)  # ∇w = -eta*dC/dw
-            nabla_b = [nb + dnb for nb,
-                       dnb in zip(nabla_b, delta_nabla_b)]  # ∇b = ∇b + ∇b
-            nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
-        self.weights = [w - (eta / len(batch)) * nw for w,
-                        nw in zip(self.weights, nabla_w)]   # w = w - (η/m)∑dC/dw [This is the stochastic grad desc over just  a small batch.]
-        self.biases = [b - (eta / len(batch)) * nb for b,
-                       nb in zip(self.biases, nabla_b)]
+            # EDIT
+            # nabla_b = [nb + dnb for nb,
+            #           dnb in zip(nabla_b, delta_nabla_b)]  # ∇b = ∇b + ∇b
+            # nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
+        
+        self.weights = [w - (eta) * nw for w,  # EDIT  / len(batch)
+                        nw in zip(self.weights, delta_nabla_w)]   # w = w - (η/m)∑dC/dw [This is the stochastic grad desc over just  a small batch.]
+        self.biases = [b - (eta) * nb for b,
+                       nb in zip(self.biases, delta_nabla_b)]
 
     def backprop(self, x, y):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
@@ -72,8 +74,10 @@ class NeuralNetwork(object):
             activation = sigmoid(z)
             activations.append(activation)
         # backward pass
-        delta = self.cost_derivative(
-            activations[-1], y) * sigmoid_prime(zs[-1])
+        # delta = self.cost_derivative(
+        #    activations[-1], y) * sigmoid_prime(zs[-1])
+        # trying new cost
+        delta = self.cost_derivative(activations[-1], y)
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
         for l in range(2, self.num_layers):
