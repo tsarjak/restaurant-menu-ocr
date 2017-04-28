@@ -4,7 +4,7 @@ import glob
 import numpy as np
 from scipy import misc
 
-root_directory = '/Users/vihanggodbole/Developer/restaurant-menu-ocr/training_data/'
+root_directory = '/Users/vihanggodbole/Developer/restaurant-menu-ocr/training_data4/'
 
 numbers = re.compile(r'(\d+)')
 
