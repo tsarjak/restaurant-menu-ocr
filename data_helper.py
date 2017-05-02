@@ -4,7 +4,7 @@ import glob
 import numpy as np
 from scipy import misc
 
-root_directory = '/Users/vihanggodbole/Developer/restaurant-menu-ocr/training_data4/'
+root_directory = '/Users/vihanggodbole/Developer/restaurant-menu-ocr/English/Fnt/'
 
 numbers = re.compile(r'(\d+)')
 
@@ -18,9 +18,9 @@ def numericalSort(value):
 class Data(object):
 
     def __init__(self):
-        self.training_input = np.zeros((50000, 784))
+        self.training_input = np.zeros((50000, 16384))
         self.training_labels = np.zeros((50000, 62))
-        self.test_input = np.zeros((12992, 784))
+        self.test_input = np.zeros((12992, 16384))
         self.test_labels = np.zeros((12992, 62))
 
     def load_data(self):
@@ -34,7 +34,7 @@ class Data(object):
         # get images
         for index, path in enumerate(paths):
             # get image in grayscale. shape(28,28) and reshape it
-            grayscale_image = misc.imread(path, mode='L').reshape(1, 784)
+            grayscale_image = misc.imread(path, mode='L').reshape(1, 16384)
             if index < 50000:
                 self.training_input[index] = grayscale_image
             else:
