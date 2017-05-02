@@ -36,7 +36,7 @@ if os.path.isfile('neural_net.h5'):
 	    history = model.fit(training_data, training_labels, epochs=20, batch_size=10)
 	    score = model.evaluate(test_data, test_labels, batch_size=32)
 
-	    print('\nTest accuracy: ', score)
+	    print('\nTest accuracy: {}'.format(score))
 
 	    save_choice = raw_input('Do you want to save this model? [Y/n]')
 	    if save_choice.lower() == 'y':
