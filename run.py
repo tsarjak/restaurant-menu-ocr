@@ -22,12 +22,20 @@ test_labels = data.test_labels
 model = Sequential()
 
 if os.path.isfile('neural_net.h5'):
+<<<<<<< Updated upstream
     load_choice = input(
         'Do you want to load the previously saved neural network?[Y/n]')
     if load_choice.lower() == 'y':
         model = load_model('neural_net.h5')
     else:
         sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+=======
+	load_choice = input('Do you want to load the previously saved neural network?[Y/n]')
+	if load_choice.lower() == 'y':
+	    model = load_model('neural_net.h5')
+	else:
+	    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+>>>>>>> Stashed changes
 
         model.add(Dense(30, activation='sigmoid', input_shape=(16384,)))
         model.add(Dense(62, activation='sigmoid'))
@@ -41,9 +49,15 @@ if os.path.isfile('neural_net.h5'):
 
         print('\nTest accuracy: {}'.format(score))
 
+<<<<<<< Updated upstream
         save_choice = input('Do you want to save this model? [Y/n]')
         if save_choice.lower() == 'y':
             save_model()
+=======
+	    save_choice = input('Do you want to save this model? [Y/n]')
+	    if save_choice.lower() == 'y':
+	        save_model()
+>>>>>>> Stashed changes
 
 image = misc.imread('10.jpg', mode='L').reshape(1, 16384)
 classes = model.predict(image)

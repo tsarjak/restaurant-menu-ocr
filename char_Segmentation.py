@@ -83,4 +83,4 @@ for idx, val in enumerate(hist):
         paddedImg = cv2.resize(paddedImg,(128,128))                                   #resize to 28x28
         paddedImg = 255 - paddedImg
         im = Image.fromarray(paddedImg)
-        im.save("NewResizedsegmentedChar/" + str(idx) + ".jpg")
+        im.save("NewResizedsegmentedChar/" + str(idx) + ".png")
